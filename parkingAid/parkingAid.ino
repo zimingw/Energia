@@ -41,10 +41,11 @@ void loop()
   // convert the time into a distance
   inches = microsecondsToInches(duration);
   cm = microsecondsToCentimeters(duration);
-  
-  digitalWrite(RED, cm < 80 ? HIGH : LOW);
+
+  int gap = parkingGap();
+  digitalWrite(RED, cm < gap ? HIGH : LOW);
   digitalWrite(GREEN, cm > 200 ? HIGH : LOW);
-  digitalWrite(BLUE, cm >=80 && cm <= 200 ? HIGH: LOW);
+  digitalWrite(BLUE, cm >=gap && cm <= 200 ? HIGH: LOW);
   
   if (cm < 100) {
     int noteDuration = 1000/4;
@@ -56,6 +57,13 @@ void loop()
   Serial.println(cm);
  
   delay(100);
+}
+
+int parkingGap() {
+  int pMeterValue = analogRead(A3);
+  int baseValue = 40; //cm
+  int adjustment = (float)pMeterValue / 1023 * 80; //value between 0 to 80cm;
+  return baseValue + adjustment;
 }
 
 long microsecondsToInches(long microseconds)
